@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const {handleLogin, handleSignup, handleProfile, handleEdit} = require("../controllers/user");
+const {handleLogin, handleSignup, handleProfile, handleEdit, handleUpdatePassword} = require("../controllers/user");
 const { checkForAuthentication } = require("../middlewares/authentication");
 const multer  = require("multer");
 const path = require("path");
@@ -24,5 +24,7 @@ router.post("/signup", handleSignup);
 router.get("/profile", checkForAuthentication, handleProfile);
 
 router.patch("/profile", checkForAuthentication, upload.single("image"), handleEdit);
+
+router.patch("/update-password", checkForAuthentication, handleUpdatePassword)
 
 module.exports = router;

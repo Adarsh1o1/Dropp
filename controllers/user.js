@@ -93,9 +93,11 @@ async function handleEdit(req, res) {
 
     // console.log(updates);
 
-    const user = await User.findByIdAndUpdate(userId, { $set: updates }, {new:true}).select(
-      "-password",
-    );
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true },
+    ).select("-password");
     return res.json({
       success: true,
       user,
@@ -109,9 +111,49 @@ async function handleEdit(req, res) {
   }
 }
 
+async function handleUpdatePassword(req, res) {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword)
+    return res
+      .status(400)
+      .json({ error: "Old Password and New Password is required." });
+  if (oldPassword === newPassword)
+    return res
+      .status(400)
+      .json({ error: "Old Password and New Password Could not be same." });
+  const userId = req.user._id;
+  try {  const user = await User.findById(userId);
+  console.log(oldPassword, newPassword, user);
+
+  const match = await bcrypt.compare(oldPassword, user.password);
+  if (!match) {
+    return res.status(404).json({
+      error: "Old Password is incorrect",
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { $set: { password: hashedPassword }, $inc: { tv: 1 },},
+    
+    { new: true },
+  );
+  return res.json({
+    success: true,
+    updatedUser,
+  });}
+  catch (error) {
+    console.log(error);
+    return res.status(500).json({error: "something went wrong"});
+  }
+}
+
 module.exports = {
   handleLogin,
   handleSignup,
   handleProfile,
   handleEdit,
+  handleUpdatePassword,
 };

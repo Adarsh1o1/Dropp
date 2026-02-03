@@ -65,6 +65,10 @@ const userSchema = mongoose.Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
+    tv: {
+      type: Number,
+      default: 0
+    }
   },
   {timestamps: true}
 );
@@ -73,8 +77,9 @@ const userSchema = mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   const user = this;
-  const saltRounds = 10
   if (!user.isModified("password")) return;
+
+  const saltRounds = 10
 
   const hashedPassword = await bcrypt.hash(user.password, saltRounds);
   this.password = hashedPassword;

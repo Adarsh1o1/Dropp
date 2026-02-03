@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const userRouter = require("./routes/user");
@@ -7,9 +8,10 @@ const cors = require("cors");
 const path = require("path");
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
+const mongo_url = process.env.MONGO_URL;
 
-connectToDb("mongodb+srv://adarshkushawha52_db_user:tQRxfzBS2SroX3DW@dropp.80z14dt.mongodb.net/?appName=Dropp").then(()=> console.log("MongoDb connected!"));
+connectToDb(mongo_url).then(()=> console.log("MongoDb connected!"));
 
 
 app.use(cors());

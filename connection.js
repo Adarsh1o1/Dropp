@@ -4,7 +4,7 @@ const clientOptions = { serverApi: { version: '1', strict: true, deprecationErro
 
 async function connectToDb(uri) {
   try {
-    // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
+
     await mongoose.connect(uri, clientOptions);
   }
   catch (error){
