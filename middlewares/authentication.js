@@ -8,7 +8,7 @@ async function checkForAuthentication(req, res, next) {
     token = token.split("Bearer ")[1];
     const payload = validateToken(token);
     if (JSON.stringify(payload).includes("Error")) return res.status(400).json({ error: payload.error });
-    console.log(payload)
+    // console.log("tokenPayload:", payload)
     const user = await User.findById(payload._id);
     if (payload.tv !== user.tv)
       return res

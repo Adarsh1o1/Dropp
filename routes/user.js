@@ -1,7 +1,14 @@
 const { Router } = require("express");
-const {handleLogin, handleSignup, handleProfile, handleEdit, handleUpdatePassword} = require("../controllers/user");
+const {
+  handleLogin,
+  handleSignup,
+  handleProfile,
+  handleEdit,
+  handleUpdatePassword,
+  handleEmailVerification,
+} = require("../controllers/user");
 const { checkForAuthentication } = require("../middlewares/authentication");
-const multer  = require("multer");
+const multer = require("multer");
 const path = require("path");
 
 const storage = multer.diskStorage({
@@ -11,7 +18,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const filename = `${Date.now()}-${file.originalname}`;
     cb(null, filename);
-  }
+  },
 });
 const upload = multer({ storage });
 
@@ -23,8 +30,15 @@ router.post("/signup", handleSignup);
 
 router.get("/profile", checkForAuthentication, handleProfile);
 
-router.patch("/profile", checkForAuthentication, upload.single("image"), handleEdit);
+router.patch(
+  "/profile",
+  checkForAuthentication,
+  upload.single("image"),
+  handleEdit,
+);
 
-router.patch("/update-password", checkForAuthentication, handleUpdatePassword)
+router.patch("/update-password", checkForAuthentication, handleUpdatePassword);
+
+router.get("/verify-email", checkForAuthentication, handleEmailVerification);
 
 module.exports = router;

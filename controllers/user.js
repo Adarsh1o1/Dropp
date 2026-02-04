@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../services/auth");
+const sendVerifyMail = require('../services/emailverification');
+
 
 async function handleLogin(req, res) {
   const { identifier, password } = req.body;
@@ -122,32 +124,39 @@ async function handleUpdatePassword(req, res) {
       .status(400)
       .json({ error: "Old Password and New Password Could not be same." });
   const userId = req.user._id;
-  try {  const user = await User.findById(userId);
-  console.log(oldPassword, newPassword, user);
+  try {
+    const user = await User.findById(userId);
+    console.log(oldPassword, newPassword, user);
 
-  const match = await bcrypt.compare(oldPassword, user.password);
-  if (!match) {
-    return res.status(404).json({
-      error: "Old Password is incorrect",
+    const match = await bcrypt.compare(oldPassword, user.password);
+    if (!match) {
+      return res.status(404).json({
+        error: "Old Password is incorrect",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: { password: hashedPassword }, $inc: { tv: 1 } },
+
+      { new: true },
+    );
+    return res.json({
+      success: true,
+      updatedUser,
     });
-  }
-
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  const updatedUser = await User.findByIdAndUpdate(
-    userId,
-    { $set: { password: hashedPassword }, $inc: { tv: 1 },},
-    
-    { new: true },
-  );
-  return res.json({
-    success: true,
-    updatedUser,
-  });}
-  catch (error) {
+  } catch (error) {
     console.log(error);
-    return res.status(500).json({error: "something went wrong"});
+    return res.status(500).json({ error: "something went wrong" });
   }
+}
+
+async function handleEmailVerification(req, res) {
+  const {username, email} = req.user;
+  const result = await sendVerifyMail(username, email);
+  return res.json({ msg: result });
 }
 
 module.exports = {
@@ -156,4 +165,5 @@ module.exports = {
   handleProfile,
   handleEdit,
   handleUpdatePassword,
+  handleEmailVerification,
 };

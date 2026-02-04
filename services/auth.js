@@ -28,4 +28,5 @@ function validateToken(token) {
 module.exports = {
   generateToken,
   validateToken,
+  secret
 };
