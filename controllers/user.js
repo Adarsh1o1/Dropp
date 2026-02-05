@@ -1,8 +1,10 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../services/auth");
-const sendVerifyMail = require('../services/emailverification');
-
+const {
+  sendVerifyMail,
+  verifyEmailToken,
+} = require("../services/emailverification");
 
 async function handleLogin(req, res) {
   const { identifier, password } = req.body;
@@ -154,9 +156,32 @@ async function handleUpdatePassword(req, res) {
 }
 
 async function handleEmailVerification(req, res) {
-  const {username, email} = req.user;
-  const result = await sendVerifyMail(username, email);
+  const { username, _id, email } = req.user;
+  const result = await sendVerifyMail(username, _id, email);
   return res.json({ msg: result });
+}
+
+async function handleTokenVerification(req, res) {
+  const { token } = req.params;
+  try {
+    const { result, payload } = verifyEmailToken(token);
+  console.log(result, payload);
+  if (result) {
+    const id = payload.data;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: { emailVerified: true } },
+      { new: true },
+    );
+    console.log(user);
+    return res.status(200).json({ status: "Verifed Succesfully" });
+  } else {
+    return res.status(400).json({ status: "invalid token" });
+  }
+  } catch (error) {
+    return res.status(500).json({ error: "something went wrong" });
+  }
+  
 }
 
 module.exports = {
@@ -166,4 +191,5 @@ module.exports = {
   handleEdit,
   handleUpdatePassword,
   handleEmailVerification,
+  handleTokenVerification,
 };

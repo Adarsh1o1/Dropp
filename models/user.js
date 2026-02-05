@@ -68,7 +68,15 @@ const userSchema = mongoose.Schema(
     tv: {
       type: Number,
       default: 0
-    }
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false
+    },
+    phoneVerified: {
+      type: Boolean,
+      default: false
+    },
   },
   {timestamps: true}
 );

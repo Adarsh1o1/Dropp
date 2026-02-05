@@ -6,6 +6,7 @@ const {
   handleEdit,
   handleUpdatePassword,
   handleEmailVerification,
+  handleTokenVerification,
 } = require("../controllers/user");
 const { checkForAuthentication } = require("../middlewares/authentication");
 const multer = require("multer");
@@ -40,5 +41,7 @@ router.patch(
 router.patch("/update-password", checkForAuthentication, handleUpdatePassword);
 
 router.get("/verify-email", checkForAuthentication, handleEmailVerification);
+
+router.get("/verify/:token", handleTokenVerification);
 
 module.exports = router;

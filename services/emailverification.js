@@ -2,7 +2,7 @@ const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./auth");
 
-async function sendVerifyMail(username, email) {
+async function sendVerifyMail(username, id, email) {
   const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -13,13 +13,14 @@ async function sendVerifyMail(username, email) {
 
   const token = jwt.sign(
     {
-      data: email,
+      data: id,
     },
     secret,
     {
       expiresIn: "10m",
     },
   );
+  console.log(token);
 
   const mailConfig = {
     from: "ondropp.app@gmail.com",
@@ -46,4 +47,14 @@ async function sendVerifyMail(username, email) {
   }
 }
 
-module.exports = sendVerifyMail;
+function verifyEmailToken(token) {
+  try {
+    const payload = jwt.verify(token, secret);
+    return {result: true, payload};
+  } catch (error) {
+    
+    return {result: false};
+  }
+}
+
+module.exports = { sendVerifyMail, verifyEmailToken };
