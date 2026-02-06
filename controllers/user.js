@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../services/auth");
@@ -165,23 +166,43 @@ async function handleTokenVerification(req, res) {
   const { token } = req.params;
   try {
     const { result, payload } = verifyEmailToken(token);
-  console.log(result, payload);
-  if (result) {
-    const id = payload.data;
-    const user = await User.findByIdAndUpdate(
-      id,
-      { $set: { emailVerified: true } },
-      { new: true },
-    );
-    // console.log(user);
-    return res.status(200).json({ status: "Verifed Succesfully" });
-  } else {
-    return res.status(400).json({ status: "invalid token" });
-  }
+    console.log(result, payload);
+    if (result) {
+      const id = payload.data;
+      const user = await User.findByIdAndUpdate(
+        id,
+        { $set: { emailVerified: true } },
+        { new: true },
+      );
+      // console.log(user);
+      return res.status(200).json({ status: "Verifed Succesfully" });
+    } else {
+      return res.status(400).json({ status: "invalid token" });
+    }
   } catch (error) {
     return res.status(500).json({ error: "something went wrong" });
   }
-  
+}
+
+async function handleDeleteUser(req, res) {
+  const userId = req.user._id;
+  const session = await mongoose.connection.startSession();
+  try {
+    session.startTransaction();
+    // await Post.deleteMany({ createdBy: userId }, { session });
+    // await Collection.deleteMany({ createdBy: userId }, { session });
+    const deletedUser = await User.findByIdAndDelete(userId, { session });
+    if (!deletedUser) return res.status(404).json({ error: "user not found" });
+    await session.commitTransaction();
+    return res.json({ msg: "user deleted suceessfuly" });
+  } catch (error) {
+    await session.abortTransaction();
+    return res
+      .status(500)
+      .json({ status: "An error occured", error: error.name });
+  } finally {
+    session.endSession();
+  }
 }
 
 module.exports = {
@@ -192,4 +213,5 @@ module.exports = {
   handleUpdatePassword,
   handleEmailVerification,
   handleTokenVerification,
+  handleDeleteUser,
 };

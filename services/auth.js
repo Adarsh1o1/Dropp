@@ -18,7 +18,6 @@ function generateToken(user) {
 function validateToken(token) {
   try {
     const payload = jwt.verify(token, secret);
-
     return payload;
   } catch (error) {
     return {error: error.name};

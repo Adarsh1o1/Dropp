@@ -7,6 +7,7 @@ const {
   handleUpdatePassword,
   handleEmailVerification,
   handleTokenVerification,
+  handleDeleteUser,
 } = require("../controllers/user");
 const { checkForAuthentication } = require("../middlewares/authentication");
 const multer = require("multer");
@@ -43,5 +44,7 @@ router.patch("/update-password", checkForAuthentication, handleUpdatePassword);
 router.get("/verify-email", checkForAuthentication, handleEmailVerification);
 
 router.get("/verify/:token", handleTokenVerification);
+
+router.delete("/delete", checkForAuthentication, handleDeleteUser);
 
 module.exports = router;

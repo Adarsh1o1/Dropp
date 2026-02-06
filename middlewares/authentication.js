@@ -7,9 +7,11 @@ async function checkForAuthentication(req, res, next) {
     if (!token) return res.status(400).json({ error: "UnAuthorization" });
     token = token.split("Bearer ")[1];
     const payload = validateToken(token);
-    if (JSON.stringify(payload).includes("Error")) return res.status(400).json({ error: payload.error });
-    // console.log("tokenPayload:", payload)
+    if (JSON.stringify(payload).includes("Error"))
+      return res.status(400).json({ error: payload.error });
+    // console.log("tokenPayload:", payload);
     const user = await User.findById(payload._id);
+    if (!user) return res.status(404).json({ error: "user not found" });
     if (payload.tv !== user.tv)
       return res
         .status(400)
