@@ -173,7 +173,7 @@ async function handleTokenVerification(req, res) {
       { $set: { emailVerified: true } },
       { new: true },
     );
-    console.log(user);
+    // console.log(user);
     return res.status(200).json({ status: "Verifed Succesfully" });
   } else {
     return res.status(400).json({ status: "invalid token" });

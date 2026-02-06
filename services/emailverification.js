@@ -41,6 +41,7 @@ async function sendVerifyMail(username, id, email) {
   };
   try {
     const info = await transport.sendMail(mailConfig);
+    console.log(info);
     return info;
   } catch (error) {
     return error.name;

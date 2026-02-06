@@ -161,3 +161,6 @@
 5/2/2026, 10:35:57 pm:  ::1 GET /user/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjk4NGMwZDEwOTM4YWJhZWE0MjVmNzFjIiwiaWF0IjoxNzcwMzEwNjM3LCJleHAiOjE3NzAzMTEyMzd9.uDmjynBJ6KEK6EpyZWfKz8vHnQmKlcv79NaSrjnc3Ww
 5/2/2026, 10:38:50 pm:  ::1 GET /user/verify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjk4NGMwZDEwOTM4YWJhZWE0MjVmNzFjIiwiaWF0IjoxNzcwMzEwNjM3LCJleHAiOjE3NzAzMTEyMzd9.uDmjynBJ6KEK6EpyZWfKz8vHnQmKlcv79NaSrjnc3Ww
 5/2/2026, 10:41:43 pm:  ::1 GET /user/profile
+6/2/2026, 6:26:34 pm:  ::1 GET /user/verify-email
+6/2/2026, 6:29:11 pm:  ::1 GET /user/verify-email
+6/2/2026, 6:30:19 pm:  ::1 GET /user/verify-email
