@@ -4,11 +4,19 @@ const { secret } = require("./auth");
 
 async function sendVerifyMail(username, id, email) {
   const transport = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, 
     auth: {
       user: "ondropp.app@gmail.com",
       pass: "dpsxfswrxrrihzbl",
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
   const token = jwt.sign(
@@ -20,7 +28,7 @@ async function sendVerifyMail(username, id, email) {
       expiresIn: "10m",
     },
   );
-  console.log(token);
+  // console.log(token);
 
   const mailConfig = {
     from: "ondropp.app@gmail.com",
@@ -41,7 +49,7 @@ async function sendVerifyMail(username, id, email) {
   };
   try {
     const info = await transport.sendMail(mailConfig);
-    
+
     return info;
   } catch (error) {
     return error;
@@ -51,10 +59,9 @@ async function sendVerifyMail(username, id, email) {
 function verifyEmailToken(token) {
   try {
     const payload = jwt.verify(token, secret);
-    return {result: true, payload};
+    return { result: true, payload };
   } catch (error) {
-    
-    return {result: false};
+    return { result: false };
   }
 }
 
