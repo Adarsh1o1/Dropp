@@ -1,12 +1,14 @@
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./auth");
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
 
 async function sendVerifyMail(username, id, email) {
   const transport = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, 
+    secure: false,
     auth: {
       user: "ondropp.app@gmail.com",
       pass: "dpsxfswrxrrihzbl",
