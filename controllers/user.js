@@ -215,7 +215,7 @@ async function handleSearch(req, res) {
         {fullName: { $regex: query, $options: "i" } }
       ]}).select("-password -email -phone -tv");
 
-    if (!result) return res.status(404).json({ error: "not found" });
+    if (!result) return res.status(404).json({ error: "not results found" });
     return res.json({ results: result });
   } catch (error) {
     return res
