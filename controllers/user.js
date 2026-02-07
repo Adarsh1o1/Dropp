@@ -205,6 +205,25 @@ async function handleDeleteUser(req, res) {
   }
 }
 
+async function handleSearch(req, res) {
+  const query = req.params.q;
+  try {
+
+    const result = await User.find({
+      $or: [
+        {username: { $regex: query, $options: "i" } },
+        {fullName: { $regex: query, $options: "i" } }
+      ]}).select("-password -email -phone -tv");
+
+    if (!result) return res.status(404).json({ error: "not found" });
+    return res.json({ results: result });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ status: "An error occured", error: error.name });
+  }
+}
+
 module.exports = {
   handleLogin,
   handleSignup,
@@ -214,4 +233,5 @@ module.exports = {
   handleEmailVerification,
   handleTokenVerification,
   handleDeleteUser,
+  handleSearch,
 };
