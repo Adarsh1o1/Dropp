@@ -184,6 +184,8 @@ async function handleTokenVerification(req, res) {
   }
 }
 
+// delete all data upon user deletion is pending (future work)
+
 async function handleDeleteUser(req, res) {
   const userId = req.user._id;
   const session = await mongoose.connection.startSession();

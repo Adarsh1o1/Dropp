@@ -20,7 +20,7 @@ async function checkForAuthentication(req, res, next) {
     // console.log(user);
     return next();
   } catch (error) {
-    console.log(error);
+    return res.status(404).json({ error: "something went wrong while authenticating" });
   }
 }
 

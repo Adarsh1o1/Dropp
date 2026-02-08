@@ -2,7 +2,7 @@ const { Router } = require("express");
 const { checkForAuthentication } = require("../middlewares/authentication");
 const multer = require("multer");
 const path = require("path");
-const { handleCreateCollection,handleMyCollection } = require("../controllers/collection");
+const { handleCreateCollection,handleMyCollection, handleDeleteCollection } = require("../controllers/collection");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -21,5 +21,6 @@ router.post('/', checkForAuthentication, upload.single('image'), handleCreateCol
 
 router.get('/', checkForAuthentication, handleMyCollection);
 
+router.delete('/:id', checkForAuthentication, handleDeleteCollection);
 
 module.exports = router;

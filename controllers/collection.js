@@ -21,9 +21,35 @@ async function handleMyCollection(req, res) {
   const userId = req.user._id;
   try {
     const collections = await Collection.find({ createdBy: userId });
-    if (!collections) return res.json({result: "no collection found"});
-    return res.json({result: collections});
+    if (!collections) return res.json({ result: "no collection found" });
+    return res.json({ result: collections });
   } catch (error) {
+    return res.status(500).json({ error: error });
+  }
+}
+
+
+// all the relevent data related to collection deletion is pending (future work)
+
+async function handleDeleteCollection(req, res) {
+  const userId = req.user._id;
+  const collectionId = req.params.id;
+  try {
+    const collection = await Collection.findById(collectionId);
+    if (!collection)
+      return res.status(404).json({ error: "no collection found" });
+    if (collection.createdBy.toString() === userId.toString()) {
+      const deletedColl = await Collection.findByIdAndDelete(req.params.id);
+      if (!deletedColl)
+        return res.status(400).json({ error: "cannot delete collection" });
+      return res.json({
+        status: "collection deleted",
+        collectionDeleted: deletedColl,
+      });
+    }
+    return res.status(400).json({ error: "unauthorized action" });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error });
   }
 }
@@ -31,4 +57,5 @@ async function handleMyCollection(req, res) {
 module.exports = {
   handleCreateCollection,
   handleMyCollection,
+  handleDeleteCollection,
 };
