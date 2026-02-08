@@ -1,0 +1,33 @@
+const mongoose = require("mongoose");
+
+const collectionSchema = mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    desc: {
+      type: String,
+      require: true,
+    },
+    displayImageUrl: {
+      type: String,
+      default: "/images/book.svg",
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+      },
+    ],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  },
+  { timestamps: true },
+);
+
+const collectionModel = mongoose.model("collection", collectionSchema);
+
+module.exports = collectionModel;

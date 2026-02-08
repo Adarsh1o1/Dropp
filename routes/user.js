@@ -10,6 +10,7 @@ const {
   handleDeleteUser,
   handleSearch,
 } = require("../controllers/user");
+
 const { checkForAuthentication } = require("../middlewares/authentication");
 const multer = require("multer");
 const path = require("path");
