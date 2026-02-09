@@ -9,6 +9,7 @@ const {
   handleTokenVerification,
   handleDeleteUser,
   handleSearch,
+  handleGetProfile,
 } = require("../controllers/user");
 
 const { checkForAuthentication } = require("../middlewares/authentication");
@@ -33,6 +34,8 @@ router.post("/login", handleLogin);
 router.post("/signup", handleSignup);
 
 router.get("/profile", checkForAuthentication, handleProfile);
+
+router.get("/profile/:id", checkForAuthentication, handleGetProfile);
 
 router.patch(
   "/profile",

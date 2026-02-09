@@ -95,7 +95,6 @@ async function handleEdit(req, res) {
         message: "No valid fields to update",
       });
     }
-
     // console.log(updates);
 
     const user = await User.findByIdAndUpdate(
@@ -169,7 +168,7 @@ async function handleTokenVerification(req, res) {
     console.log(result, payload);
     if (result) {
       const id = payload.data;
-      const user = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
         id,
         { $set: { emailVerified: true } },
         { new: true },
@@ -221,10 +220,28 @@ async function handleSearch(req, res) {
     return res.json({ results: result });
   } catch (error) {
     return res
-      .status(500)
+      .status(400)
       .json({ status: "An error occured", error: error.name });
   }
 }
+
+async function handleGetProfile(req, res) {
+    const userId = req.params.id;
+    if(!userId) return res.status(400).json({ error: "no params found" });
+  try {
+
+    const result = await User.findById(userId).select("-password -email -phone -tv");
+
+    if (!result) return res.status(404).json({ error: "not results found" });
+
+    return res.json({ results: result });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ status: "invalid request", error: error.name });
+  }
+}
+
 
 module.exports = {
   handleLogin,
@@ -236,4 +253,5 @@ module.exports = {
   handleTokenVerification,
   handleDeleteUser,
   handleSearch,
+  handleGetProfile
 };

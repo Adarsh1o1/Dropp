@@ -10,6 +10,8 @@ const collectionSchema = mongoose.Schema(
       type: String,
       require: true,
     },
+
+    // TO BE REMOVE
     displayImageUrl: {
       type: String,
       default: "/images/book.svg",

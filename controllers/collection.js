@@ -1,12 +1,12 @@
 const Collection = require("../models/collections");
 
 async function handleCreateCollection(req, res) {
-  const { name, desc } = req.body;
-  if (!name || !desc)
+  const { title, desc } = req.body;
+  if (!title || !desc)
     return res.status(400).json({ error: "All fields are required" });
   try {
     await Collection.create({
-      title: name,
+      title: title,
       desc: desc,
       createdBy: req.user._id,
     });
@@ -14,6 +14,36 @@ async function handleCreateCollection(req, res) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error });
+  }
+}
+
+async function handleEditCollection(req, res) {
+  const cId = req.params.id;
+
+  try {
+    const updates = {};
+    const allowed_updates = ["title", "desc"];
+    for (const key of allowed_updates) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No valid fields to update",
+      });
+    }
+    const updatedCollection = await Collection.findByIdAndUpdate(
+      cId,
+      { $set: updates },
+      { new: true },
+    );
+    if (!updatedCollection)
+      return res.json({ result: "error updating collection" });
+    return res.json({ status : "updated successfully", result: updatedCollection });
+  } catch (error) {
+    return res.status(400).json({ status: "invalid request" });
   }
 }
 
@@ -27,7 +57,6 @@ async function handleMyCollection(req, res) {
     return res.status(500).json({ error: error });
   }
 }
-
 
 // all the relevent data related to collection deletion is pending (future work)
 
@@ -54,8 +83,38 @@ async function handleDeleteCollection(req, res) {
   }
 }
 
+async function handleGetCollectionById(req, res) {
+  const cId = req.params.id;
+  try {
+    const collection = await Collection.findById(cId).populate(
+      "createdBy",
+      "_id fullName profileImageUrl followers username",
+    );
+    if (!collection) return res.json({ result: "no collection found" });
+    return res.json({ result: collection });
+  } catch (error) {
+    return res.status(400).json({ status: "invalid request" });
+  }
+}
+
+async function handleExploreCollections(req, res) {
+  try {
+    const collections = await Collection.find({}).populate(
+      "createdBy",
+      "_id fullName profileImageUrl followers username",
+    );
+    if (!collections) return res.json({ result: "no collection found" });
+    return res.json({ result: collections });
+  } catch (error) {
+    return res.status(400).json({ status: "invalid request" });
+  }
+}
+
 module.exports = {
   handleCreateCollection,
+  handleEditCollection,
   handleMyCollection,
   handleDeleteCollection,
+  handleGetCollectionById,
+  handleExploreCollections,
 };
