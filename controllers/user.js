@@ -209,12 +209,12 @@ async function handleDeleteUser(req, res) {
 async function handleSearch(req, res) {
   const query = req.params.q;
   try {
-
     const result = await User.find({
       $or: [
-        {username: { $regex: query, $options: "i" } },
-        {fullName: { $regex: query, $options: "i" } }
-      ]}).select("-password -email -phone -tv");
+        { username: { $regex: query, $options: "i" } },
+        { fullName: { $regex: query, $options: "i" } },
+      ],
+    }).select("-password -email -phone -tv");
 
     if (!result) return res.status(404).json({ error: "not results found" });
     return res.json({ results: result });
@@ -226,11 +226,12 @@ async function handleSearch(req, res) {
 }
 
 async function handleGetProfile(req, res) {
-    const userId = req.params.id;
-    if(!userId) return res.status(400).json({ error: "no params found" });
+  const userId = req.params.id;
+  if (!userId) return res.status(400).json({ error: "no params found" });
   try {
-
-    const result = await User.findById(userId).select("-password -email -phone -tv");
+    const result = await User.findById(userId).select(
+      "-password -email -phone -tv",
+    );
 
     if (!result) return res.status(404).json({ error: "not results found" });
 
@@ -242,6 +243,19 @@ async function handleGetProfile(req, res) {
   }
 }
 
+async function handleGetAllUsers(req, res) {
+  console.log(req.user._id);
+  try {
+    const allUsers = await User.find({ _id: { $ne: req.user._id } }).select("-password");
+    if (!allUsers) return res.status(404).json({ error: "not results found" });
+    return res.json({ results: allUsers });
+  } catch (error) {
+    // console.log(error);
+    return res
+      .status(500)
+      .json({ status: "invalid request", error: error.name });
+  }
+}
 
 module.exports = {
   handleLogin,
@@ -253,5 +267,6 @@ module.exports = {
   handleTokenVerification,
   handleDeleteUser,
   handleSearch,
-  handleGetProfile
+  handleGetProfile,
+  handleGetAllUsers,
 };

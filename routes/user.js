@@ -10,6 +10,7 @@ const {
   handleDeleteUser,
   handleSearch,
   handleGetProfile,
+  handleGetAllUsers,
 } = require("../controllers/user");
 
 const { checkForAuthentication } = require("../middlewares/authentication");
@@ -35,6 +36,8 @@ router.post("/signup", handleSignup);
 
 router.get("/profile", checkForAuthentication, handleProfile);
 
+router.get("/", checkForAuthentication, handleGetAllUsers);
+
 router.get("/profile/:id", checkForAuthentication, handleGetProfile);
 
 router.patch(
@@ -50,7 +53,7 @@ router.get("/verify-email", checkForAuthentication, handleEmailVerification);
 
 router.get("/verify/:token", handleTokenVerification);
 
-router.get('/search/:q', checkForAuthentication, handleSearch);
+router.get("/search/:q", checkForAuthentication, handleSearch);
 
 router.delete("/delete", checkForAuthentication, handleDeleteUser);
 
