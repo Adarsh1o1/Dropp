@@ -246,7 +246,9 @@ async function handleGetProfile(req, res) {
 async function handleGetAllUsers(req, res) {
   console.log(req.user._id);
   try {
-    const allUsers = await User.find({ _id: { $ne: req.user._id } }).select("-password");
+    const allUsers = await User.find({ _id: { $ne: req.user._id } }).select(
+      "-password -email -tv",
+    );
     if (!allUsers) return res.status(404).json({ error: "not results found" });
     return res.json({ results: allUsers });
   } catch (error) {

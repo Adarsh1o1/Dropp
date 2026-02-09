@@ -9,6 +9,7 @@ const {
   handleGetCollectionById,
   handleExploreCollections,
   handleEditCollection,
+  handleSearchCollection,
 } = require("../controllers/collection");
 
 const storage = multer.diskStorage({
@@ -40,6 +41,11 @@ router.get(
   "/exploreCollections",
   checkForAuthentication,
   handleExploreCollections,
+);
+router.get(
+  "/search/:q",
+  checkForAuthentication,
+  handleSearchCollection,
 );
 
 router.delete("/:id", checkForAuthentication, handleDeleteCollection);
