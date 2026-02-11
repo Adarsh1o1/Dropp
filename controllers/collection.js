@@ -41,17 +41,20 @@ async function handleEditCollection(req, res) {
     );
     if (!updatedCollection)
       return res.json({ result: "error updating collection" });
-    return res.json({ status : "updated successfully", result: updatedCollection });
+    return res.json({
+      status: "updated successfully",
+      result: updatedCollection,
+    });
   } catch (error) {
     return res.status(400).json({ status: "invalid request" });
   }
 }
 
-async function handleMyCollection(req, res) {
-  const userId = req.user._id;
+async function handleGetCollectionByUserId(req, res) {
+  const userId = req.params.id;
   try {
     const collections = await Collection.find({ createdBy: userId });
-    if (!collections) return res.status(204).send(); 
+    if (collections.length === 0) return res.status(204).send();
     return res.json({ result: collections });
   } catch (error) {
     return res.status(500).json({ error: error });
@@ -90,7 +93,7 @@ async function handleGetCollectionById(req, res) {
       "createdBy",
       "_id fullName profileImageUrl followers username",
     );
-    if (!collection) return res.status(204).send(); 
+    if (!collection) return res.status(204).send();
     return res.json({ result: collection });
   } catch (error) {
     return res.status(400).json({ status: "invalid request" });
@@ -103,7 +106,7 @@ async function handleExploreCollections(req, res) {
       "createdBy",
       "_id fullName profileImageUrl followers username",
     );
-    if (!collections) return res.status(204).send(); 
+    if (!collections) return res.status(204).send();
     return res.json({ result: collections });
   } catch (error) {
     return res.status(400).json({ status: "invalid request" });
@@ -119,7 +122,7 @@ async function handleSearchCollection(req, res) {
         { desc: { $regex: query, $options: "i" } },
       ],
     });
-    if (result.length === 0) return res.status(204).send(); 
+    if (result.length === 0) return res.status(204).send();
     return res.json({ results: result });
   } catch (error) {
     return res
@@ -128,12 +131,37 @@ async function handleSearchCollection(req, res) {
   }
 }
 
+async function handleLike(req, res) {
+  try {
+    const collectionId = req.params.id;
+    const userId = req.user._id;
+    // console.log(userId, collectionId);
+    const collection = await Collection.findById(collectionId);
+    // console.log(collection);
+    const isLiked = collection.likes.includes(userId);
+    const action = isLiked
+      ? { $pull: { likes: userId } }
+      : { $addToSet: { likes: userId } };
+
+    const likedCollection = await Collection.findByIdAndUpdate(
+      collectionId,
+      action,
+      { new: true },
+    );
+    return res.json(likedCollection);
+  } catch (error) {
+    // console.log(error);
+    return res.status(500).json(error.name);
+  }
+}
+
 module.exports = {
   handleCreateCollection,
   handleEditCollection,
-  handleMyCollection,
+  handleGetCollectionByUserId,
   handleDeleteCollection,
   handleGetCollectionById,
   handleExploreCollections,
   handleSearchCollection,
+  handleLike,
 };

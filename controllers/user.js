@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../models/user");
+const Collection = require("../models/collections");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../services/auth");
 const {
@@ -51,7 +52,7 @@ async function handleSignup(req, res) {
     });
     res.status(201).json({ msg: "user created" });
   } catch (error) {
-    console.log(error.code);
+    // console.log(error.code);
     const field = Object.keys(error.keyValue)[0];
     if (error.code === 11000) {
       res.status(400).json({ error: `${field} already exists` });
@@ -107,7 +108,7 @@ async function handleEdit(req, res) {
       user,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({
       success: false,
       message: "Failed to update profile",
@@ -128,7 +129,7 @@ async function handleUpdatePassword(req, res) {
   const userId = req.user._id;
   try {
     const user = await User.findById(userId);
-    console.log(oldPassword, newPassword, user);
+    // console.log(oldPassword, newPassword, user);
 
     const match = await bcrypt.compare(oldPassword, user.password);
     if (!match) {
@@ -150,7 +151,7 @@ async function handleUpdatePassword(req, res) {
       updatedUser,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).json({ error: "something went wrong" });
   }
 }
@@ -165,7 +166,7 @@ async function handleTokenVerification(req, res) {
   const { token } = req.params;
   try {
     const { result, payload } = verifyEmailToken(token);
-    console.log(result, payload);
+    // console.log(result, payload);
     if (result) {
       const id = payload.data;
       await User.findByIdAndUpdate(
@@ -216,7 +217,8 @@ async function handleSearch(req, res) {
       ],
     }).select("-password -email -phone -tv");
 
-    if (!result) return res.status(404).json({ error: "not results found" });
+    if (result.length === 0)
+      return res.status(404).json({ error: "not results found" });
     return res.json({ results: result });
   } catch (error) {
     return res
@@ -232,7 +234,10 @@ async function handleGetProfile(req, res) {
     const result = await User.findById(userId).select(
       "-password -email -phone -tv",
     );
-
+    // const collections = await Collection.find({ createdBy: userId }).select(
+    //   "_id title",
+    // );
+    // console.log(collections);
     if (!result) return res.status(404).json({ error: "not results found" });
 
     return res.json({ results: result });
@@ -244,7 +249,7 @@ async function handleGetProfile(req, res) {
 }
 
 async function handleGetAllUsers(req, res) {
-  console.log(req.user._id);
+  // console.log(req.user._id);
   try {
     const allUsers = await User.find({ _id: { $ne: req.user._id } }).select(
       "-password -email -tv",
