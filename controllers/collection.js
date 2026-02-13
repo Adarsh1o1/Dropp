@@ -106,6 +106,7 @@ async function handleExploreCollections(req, res) {
       "createdBy",
       "_id fullName profileImageUrl followers username",
     );
+
     if (!collections) return res.status(204).send();
     return res.json({ result: collections });
   } catch (error) {

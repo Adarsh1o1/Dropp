@@ -31,7 +31,11 @@ router.post("/", checkForAuthentication, handleCreateCollection);
 
 router.patch("/:id", checkForAuthentication, handleEditCollection);
 
-router.get("/:id", checkForAuthentication, handleGetCollectionByUserId);
+router.get(
+  "/getCollectionByUserId/:id",
+  checkForAuthentication,
+  handleGetCollectionByUserId,
+);
 
 router.get(
   "/getCollectionById/:id",
@@ -40,7 +44,7 @@ router.get(
 );
 
 router.get(
-  "/exploreCollections",
+  "/explore/collections",
   checkForAuthentication,
   handleExploreCollections,
 );
