@@ -10,16 +10,16 @@ const collectionSchema = mongoose.Schema(
       type: String,
       require: true,
     },
-
-    // TO BE REMOVE
-    displayImageUrl: {
-      type: String,
-      default: "/images/book.svg",
-    },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product",
+      },
+    ],
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "user"
+        ref: "user",
       },
     ],
     createdBy: {

@@ -5,12 +5,14 @@ async function handleCreateCollection(req, res) {
   if (!title || !desc)
     return res.status(400).json({ error: "All fields are required" });
   try {
-    await Collection.create({
+    const collection = await Collection.create({
       title: title,
       desc: desc,
       createdBy: req.user._id,
     });
-    return res.status(201).json({ status: "collection created" });
+    return res
+      .status(201)
+      .json({ status: "collection created", collection: collection });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error });
